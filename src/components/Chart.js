@@ -27,6 +27,13 @@ class Chart extends Component{
 						legend:{
 						  display:this.props.displayLegend,
 						  position:this.props.legendPosition
+						},scales: {
+							yAxes : [{
+								ticks : {
+									max : 100,    
+									min : 0
+								}
+							}]
 						}
 					}}
 				/>
