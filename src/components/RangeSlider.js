@@ -1,10 +1,15 @@
-import React, {Component} from 'react';
-// Using an ES6 transpiler like Babel
-import Slider from 'react-rangeslider'
 
-// To include the default styles
-import 'react-rangeslider/lib/index.css'
-import App from '../App';
+
+import React, {Component}  from 'react';
+import ReactDOM from 'react-dom';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
+const style = { width: 400, margin: 50 };
+const marks = {
+  1:'$1k',
+  50: '$50k',
+  100: '$100k',
+};
 
 class VolumeSlider extends Component {
  constructor(props) {
@@ -18,20 +23,16 @@ class VolumeSlider extends Component {
     this.setState({
       volume: value
     })
-	this.props.action(value)
+	 this.props.handle(value)
   }
  
   render() {
     let { volume } = this.state
     return (
-      <Slider
-		  min={0}
-		  max={58}
-		  step={1}
-		  value={volume}
-          orientation="horizontal"
-		  onChange={this.handleOnChange}
-      />
+      
+    <div style={style}>
+      <Slider dots min={1} max={100} marks={marks} step={25} onChange={this.handleOnChange} defaultValue={1} />
+    </div>
     )
   }
 }

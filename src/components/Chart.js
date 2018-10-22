@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Bar,Line,Pie} from 'react-chartjs-2';
+import {Line} from 'react-chartjs-2';
 class Chart extends Component{
 	constructor(props){
 		super(props);
@@ -9,7 +9,7 @@ class Chart extends Component{
 	}
 	static defaultProps = {
     displayTitle:true,
-    displayLegend: true,
+    displayLegend: false,
     legendPosition:'right',
     location:'City'
 }
@@ -17,6 +17,7 @@ class Chart extends Component{
 	return(
 	<div className="chart">
 		<Line
+		datasetKeyProvider={this.props.datasetKeyProvider}
 					data={this.state.chartData}
 					options={{
 						title:{
@@ -29,10 +30,12 @@ class Chart extends Component{
 						  position:this.props.legendPosition
 						},scales: {
 							yAxes : [{
-								ticks : {
-									max : 100,    
-									min : 0
-								}
+								display: true
+							}],
+							xAxes:[{
+							  gridLines: {
+								display: false,
+							  }
 							}]
 						}
 					}}

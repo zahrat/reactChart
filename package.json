@@ -5,6 +5,7 @@
   "dependencies": {
     "chart.js": "^2.7.3",
     "onsenui": "^2.10.5",
+    "rc-slider": "^8.6.3",
     "react": "^16.5.2",
     "react-chartjs-2": "^2.7.4",
     "react-csv-reader": "^1.1.0",
