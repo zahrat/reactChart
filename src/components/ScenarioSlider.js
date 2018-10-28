@@ -10,11 +10,17 @@ const marks = {
 
 class RCSlider extends Component {
  constructor(props) {
-    super(props)
+    super(props);
+	this.state={
+		ScenarioValue:this.props.ScenarioValue
+	}
   }
  
   handleOnChange = (value) => {
-	 this.props.handle(value)
+	  this.setState({
+		  ScenarioValue:value
+	  });
+	 this.props.handle(value);
   }
  
   render() {
