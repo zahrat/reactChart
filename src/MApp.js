@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 import Chart from './components/Chart';
 import InvestSlider from './components/InvestSlider';
-import ScenarioSlider from './components/ScenarioSlider';
 const API = 'https://sheets.googleapis.com/v4/spreadsheets/176E8o0qhfHVTjYIwuk5kAWNggYOD526d4HBqTegJ4zM/values:batchGet?'+
 'ranges=Investment!C3:C7&ranges=Worst!F12:V12&'+//for base investments & worst data
 'ranges=Worst!F17:V17&ranges=Worst!F22:V22&ranges=Worst!F27:V27&ranges=Worst!F32:V32&'+
@@ -13,18 +12,31 @@ class App extends Component {
 	constructor(props){
 		super(props);
 		this.updateRange= this.updateRange.bind(this);
-		this.updateScenario=this.updateScenario.bind(this);
 		this.state = {
 			sliderValue:1,
 			ScenarioValue:1,
+			baseInvestmet:{data:[0,0,0,0,0]},
 			maxVal:1,
 			chartData:{
 				labels: ['','1 year','2 year','3 year','4 year','5 year'],
 				datasets:[{
-				label:'Population1',
+				invest:'x',
+				label:'Worst',
 				data:[],
 				backgroundColor:[
-				  '#447DB9'
+				  '#464E99'
+				]
+				},{
+				label:'Mid',
+				data:{},
+				backgroundColor:[
+				  '#A9812F'
+				]
+				},{
+				label:'Best',
+				data:[],
+				backgroundColor:[
+				  '#1E967A'
 				]
 				}]
 			},
@@ -43,92 +55,59 @@ class App extends Component {
 			  var temp=data.valueRanges[(i*5)+(j+1)].values[0];
 			  switch (i){
 				  case 0:
-					worstData[j][1]=temp[0]*.001;
-					worstData[j][2]=temp[4]*.001;
-					worstData[j][3]=temp[8]*.001;
-					worstData[j][4]=temp[12]*.001;
-					worstData[j][5]=temp[16]*.001;
+					worstData[j][1]=temp[0];
+					worstData[j][2]=temp[4];
+					worstData[j][3]=temp[8];
+					worstData[j][4]=temp[12];
+					worstData[j][5]=temp[16];
 				  break;
 				  case 1:
-					midData[j][1]=temp[0]*.001;
-					midData[j][2]=temp[4]*.001;
-					midData[j][3]=temp[8]*.001;
-					midData[j][4]=temp[12]*.001;
-					midData[j][5]=temp[16]*.001;
+					midData[j][1]=temp[0];
+					midData[j][2]=temp[4];
+					midData[j][3]=temp[8];
+					midData[j][4]=temp[12];
+					midData[j][5]=temp[16];
 				  break;
 				  case 2:
-					bestData[j][1]=temp[0]*.001;
-					bestData[j][2]=temp[4]*.001;
-					bestData[j][3]=temp[8]*.001;
-					bestData[j][4]=temp[12]*.001;
-					bestData[j][5]=temp[16]*.001;
+					bestData[j][1]=temp[0];
+					bestData[j][2]=temp[4];
+					bestData[j][3]=temp[8];
+					bestData[j][4]=temp[12];
+					bestData[j][5]=temp[16];
 				  break;
 			  }
 		  }
 	  }
+	  let tempMax=(parseFloat(Math.round(bestData[0][5] * 100) / 100).toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	  
+		const tempBase=this.state.baseInvestmet;
+		for(let i=0;i<data.valueRanges[0].values.length;i++){
+		tempBase.data[i]=(data.valueRanges[0].values[i]);}
 		this.setState({ 
+			baseInvestmet:tempBase,
 			WorstSets:worstData,
 			MidSets:midData,
 			BestSets:bestData,
-			maxVal:parseFloat(Math.round(worstData[0][5]*1000 * 100) / 100).toFixed(2)});
-		});
-		this.setBaseData();		
+			maxVal:tempMax});
+		}).then(()=>this.updateRange(1));
+		//this.updateRange(1);		
 	}
 	componentDidMount(){
 		this.setDatsets();
 	}
-	updateScenario(val){
-		const chartData = this.state.chartData;
-		const investVal=this.state.sliderValue;
-		switch(val){
-			case 1:
-				console.log('sv 1');
-				chartData.datasets[0].data=this.state.WorstSets[investVal-1];
-				break;
-			case 2:
-				console.log('sv 2');
-				chartData.datasets[0].data=this.state.MidSets[investVal-1];
-				break;
-			case 3:
-				console.log('sv 3');
-				chartData.datasets[0].data=this.state.BestSets[investVal-1];
-				break;
-			default:break;
-		}
-		this.setState({
-		  ScenarioValue: val,
-		  chartData: chartData,
-		  maxVal:parseFloat(Math.round(chartData.datasets[0].data[5]*1000* 100) / 100).toFixed(2)
-		});
-	}
 	updateRange(val) {
 		const chartData = this.state.chartData;
-		const sv=this.state.ScenarioValue;
-		const worsset=this.state.WorstSets;
-		switch(this.state.ScenarioValue){
-			case 1:
-				console.log('sv 1');
-				chartData.datasets[0].data=this.state.WorstSets[val-1];
-				break;
-			case 2:
-				console.log('sv 2');
-				chartData.datasets[0].data=this.state.MidSets[val-1];
-				break;
-			case 3:
-				console.log('sv 3');
-				chartData.datasets[0].data=this.state.BestSets[val-1];
-				break;
-			default:break;
-		}
+		console.log('update range',this.state.baseInvestmet.data[val-1]);
+		chartData.datasets[0].data=this.state.WorstSets[val-1];
+		chartData.datasets[0].invest=this.state.baseInvestmet.data[val-1];
+		chartData.datasets[1].data=this.state.MidSets[val-1];
+		chartData.datasets[2].data=this.state.BestSets[val-1];
+	  let tempMax=(parseFloat(Math.round(chartData.datasets[2].data[5] * 100) / 100).toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		this.setState({
 		  sliderValue: val,
 		  chartData: chartData,
-		  maxVal:parseFloat(Math.round(chartData.datasets[0].data[5]*1000* 100) / 100).toFixed(2)
+		  maxVal:tempMax
 		});
-		console.log(this.state.sliderValue);
-    }
-	setBaseData(){
-		this.updateRange(1);
     }
 	datasetKeyProvider(){ return Math.random(); }
   render() {
@@ -139,9 +118,8 @@ class App extends Component {
       <div className="App" style={stylePadding}>
         <div className="">
             <h2 >Total portfolio value: ${this.state.maxVal}</h2>
-            <Chart chartData={this.state.chartData} location="1 year" legendPosition="bottom" redraw datasetKeyProvider={this.datasetKeyProvider}/>
+            <Chart chartData={this.state.chartData} sidebarVal={this.state.baseInvestmet} location="1 year" legendPosition="bottom" redraw datasetKeyProvider={this.datasetKeyProvider}/>
 		    <InvestSlider range={this.state.sliderValue} handle={this.updateRange}/>
-			<ScenarioSlider range={this.state.ScenarioValue} handle={this.updateScenario}/>
 		</div>
       </div>
     );

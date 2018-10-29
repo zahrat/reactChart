@@ -9,7 +9,7 @@ class Chart extends Component{
 	}
 	static defaultProps = {
     displayTitle:true,
-    displayLegend: false,
+    displayLegend: true,
     legendPosition:'right',
     location:'City'
 }
@@ -34,7 +34,9 @@ class Chart extends Component{
 								ticks: {
 									// Include a dollar sign in the ticks
 									callback: function(value, index, values) {
-										return '$' + value+'k';
+										if(value<1000000)
+										return '$' + (value*.001)+'k';
+										else return '$'+(value*.000001)+'M';
 									}
 								}
 							}],
@@ -43,6 +45,13 @@ class Chart extends Component{
 								display: false,
 							  }
 							}]
+						},tooltips: {
+							callbacks: {
+							label: function(tooltipItem,data) {
+								console.log(data);
+								return 'ROI: '+parseFloat(Math.round((tooltipItem.yLabel/data.datasets[0].invest)*100*100) / 100).toFixed(2)+'%';
+							}
+						  }
 						}
 					}}
 				/>
