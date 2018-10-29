@@ -146,11 +146,11 @@ class App extends Component {
 	datasetKeyProvider(){ return Math.random(); }
   render() {
 	  var stylePadding={
-		  width: 600
+		  width: 600,margin: 10
 	  }
     return (
       <div className="App" style={stylePadding}>
-        <div className="">
+        <div className=""style={stylePadding}>
             <h2 >Expected Return:${this.state.minVal} - ${this.state.maxVal}</h2>
             <Chart maxx={this.state.maxYAxis}  chartData={this.state.chartData} sidebarVal={this.state.baseInvestmet} location="1 year" legendPosition="bottom" redraw datasetKeyProvider={this.datasetKeyProvider}/>
 		    <InvestSlider range={this.state.sliderValue} handle={this.updateRange}/>

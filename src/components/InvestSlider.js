@@ -1,7 +1,7 @@
 import React, {Component}  from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-const style = { width: 400, margin: 50 };
+const style = { width: 500, margin: 50 };
 const marks = {
   1:'$4.9k',
   2: '$19k',

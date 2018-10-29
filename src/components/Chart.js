@@ -19,12 +19,10 @@ class Chart extends Component{
 	<div className="chart">
 		<Line
 		datasetKeyProvider={this.props.datasetKeyProvider}
-					borderWidth={100}
 					data={this.state.chartData}
 					options={{
 						title:{
 						  s:this.props.displayTitle,
-						  text:'Largest Cities In Massachusetts',
 						  fontSize:25
 						},
 						legend:{
@@ -33,14 +31,30 @@ class Chart extends Component{
 						},scales: {
 							yAxes : [{
 								display: true,
+                                stacked: true,
+								type: 'logarithmic',
 								ticks: {
 									// Include a dollar sign in the ticks
 									callback: function(value, index, values) {
-										if(value<1000000)
+										if(value<1000)
+											return '$' + parseFloat(value).toFixed(2);
+										else if(value<1000000)
 										return '$' + parseFloat(value*.001).toFixed(2)+'k';
 										else return '$'+parseFloat(value*.000001).toFixed(2)+'M';
-									},max:this.props.maxx,
-									stepSize:1000000
+									},max:this.props.maxx*10,beginAtZero: true
+								},
+								afterBuildTicks: function (chartObj) { //Build ticks labelling as per your need
+								let maxchartval=chartObj.ticks[0];
+								console.log(maxchartval);
+									chartObj.ticks = [];
+									let l=0;
+									for(let i=0;l<=maxchartval;i++){
+										chartObj.ticks.push(Math.pow(10,i));
+										l=Math.pow(10,i);
+									}
+								},
+								scaleLabel: {
+									display: false
 								}
 							}],
 							xAxes:[{
