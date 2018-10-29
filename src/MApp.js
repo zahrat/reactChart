@@ -17,26 +17,31 @@ class App extends Component {
 			ScenarioValue:1,
 			baseInvestmet:{data:[0,0,0,0,0]},
 			maxVal:1,
+			minVal:1,
+			maxYAxis:1,
 			chartData:{
 				labels: ['','1 year','2 year','3 year','4 year','5 year'],
 				datasets:[{
 				invest:'x',
 				label:'Worst',
 				data:[],
+				borderWidth:1,
 				backgroundColor:[
-				  '#464E99'
+				  '#8589c7'
 				]
 				},{
 				label:'Mid',
 				data:{},
+				borderWidth:1,
 				backgroundColor:[
-				  '#A9812F'
+				  '#6267b7'
 				]
 				},{
 				label:'Best',
 				data:[],
+				borderWidth:1,
 				backgroundColor:[
-				  '#1E967A'
+				  '#474d99'
 				]
 				}]
 			},
@@ -78,8 +83,21 @@ class App extends Component {
 			  }
 		  }
 	  }
-	  let tempMax=(parseFloat(Math.round(bestData[0][5] * 100) / 100).toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	  
+	  let tempMax=(parseFloat(Math.round(bestData[0][5] * 100) / 100).toFixed(2));
+	  let tempMin=(parseFloat(Math.round(worstData[0][5] * 100) / 100).toFixed(2));
+	  if(tempMin<1000)
+		  tempMin=parseFloat(tempMin).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	  else if(tempMin<1000000)
+		  tempMin=parseFloat(tempMin*.001).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'k';
+	  else if(tempMin>=1000000)
+		  tempMin=parseFloat(tempMin*.000001).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'M';
+	  if(tempMax<1000)
+		  tempMax=parseFloat(tempMax).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	  else if(tempMax<1000000)
+		  tempMax=parseFloat(tempMax*.001).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'k';
+	  else if(tempMax>=1000000)
+		  tempMax=parseFloat(tempMax*.000001).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'M';
+	  let tempYAxis=(parseFloat(Math.round(bestData[4][5] * 100) / 100).toFixed(2));
 		const tempBase=this.state.baseInvestmet;
 		for(let i=0;i<data.valueRanges[0].values.length;i++){
 		tempBase.data[i]=(data.valueRanges[0].values[i]);}
@@ -88,7 +106,9 @@ class App extends Component {
 			WorstSets:worstData,
 			MidSets:midData,
 			BestSets:bestData,
-			maxVal:tempMax});
+			maxYAxis:tempYAxis,
+			maxVal:tempMax,
+			minVal:tempMin});
 		}).then(()=>this.updateRange(1));
 		//this.updateRange(1);		
 	}
@@ -102,11 +122,25 @@ class App extends Component {
 		chartData.datasets[0].invest=this.state.baseInvestmet.data[val-1];
 		chartData.datasets[1].data=this.state.MidSets[val-1];
 		chartData.datasets[2].data=this.state.BestSets[val-1];
-	  let tempMax=(parseFloat(Math.round(chartData.datasets[2].data[5] * 100) / 100).toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	  let tempMax=(parseFloat(Math.round(chartData.datasets[2].data[5] * 100) / 100).toFixed(2));
+	  let tempMin=(parseFloat(Math.round(chartData.datasets[0].data[5] * 100) / 100).toFixed(2));	  
+	  if(tempMin<1000)
+		  tempMin=parseFloat(tempMin).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	  else if(tempMin<1000000)
+		  tempMin=parseFloat(tempMin*.001).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'k';
+	  else if(tempMin>=1000000)
+		  tempMin=parseFloat(tempMin*.000001).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'M';
+	  if(tempMax<1000)
+		  tempMax=parseFloat(tempMax).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	  else if(tempMax<1000000)
+		  tempMax=parseFloat(tempMax*.001).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'k';
+	  else if(tempMax>=1000000)
+		  tempMax=parseFloat(tempMax*.000001).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'M';
 		this.setState({
 		  sliderValue: val,
 		  chartData: chartData,
-		  maxVal:tempMax
+		  maxVal:tempMax,
+		  minVal:tempMin
 		});
     }
 	datasetKeyProvider(){ return Math.random(); }
@@ -117,8 +151,8 @@ class App extends Component {
     return (
       <div className="App" style={stylePadding}>
         <div className="">
-            <h2 >Total portfolio value: ${this.state.maxVal}</h2>
-            <Chart chartData={this.state.chartData} sidebarVal={this.state.baseInvestmet} location="1 year" legendPosition="bottom" redraw datasetKeyProvider={this.datasetKeyProvider}/>
+            <h2 >Expected Return:${this.state.minVal} - ${this.state.maxVal}</h2>
+            <Chart maxx={this.state.maxYAxis}  chartData={this.state.chartData} sidebarVal={this.state.baseInvestmet} location="1 year" legendPosition="bottom" redraw datasetKeyProvider={this.datasetKeyProvider}/>
 		    <InvestSlider range={this.state.sliderValue} handle={this.updateRange}/>
 		</div>
       </div>

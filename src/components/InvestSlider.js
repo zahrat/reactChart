@@ -40,7 +40,7 @@ class VolumeSlider extends Component {
     return (
       
     <div style={style}>
-      <Slider dots min={1} max={5} marks={marks} step={1} onChange={this.handleOnChange} defaultValue={1} />
+  <Slider dots min={1} max={5} marks={marks} step={1} dotStyle={{height:70},{width:20}} onChange={this.handleOnChange} defaultValue={1} />
     </div>
     )
   }

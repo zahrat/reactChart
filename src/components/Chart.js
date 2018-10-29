@@ -6,6 +6,7 @@ class Chart extends Component{
 		this.state={
 			chartData:props.chartData
 		}
+	console.log(this.props.maxx);
 	}
 	static defaultProps = {
     displayTitle:true,
@@ -18,6 +19,7 @@ class Chart extends Component{
 	<div className="chart">
 		<Line
 		datasetKeyProvider={this.props.datasetKeyProvider}
+					borderWidth={100}
 					data={this.state.chartData}
 					options={{
 						title:{
@@ -35,9 +37,10 @@ class Chart extends Component{
 									// Include a dollar sign in the ticks
 									callback: function(value, index, values) {
 										if(value<1000000)
-										return '$' + (value*.001)+'k';
-										else return '$'+(value*.000001)+'M';
-									}
+										return '$' + parseFloat(value*.001).toFixed(2)+'k';
+										else return '$'+parseFloat(value*.000001).toFixed(2)+'M';
+									},max:this.props.maxx,
+									stepSize:1000000
 								}
 							}],
 							xAxes:[{
@@ -46,9 +49,14 @@ class Chart extends Component{
 							  }
 							}]
 						},tooltips: {
+							custom: function(tooltip) {
+								if (!tooltip) return;
+								// disable displaying the color box;
+								tooltip.displayColors = false;
+							  },
 							callbacks: {
 							label: function(tooltipItem,data) {
-								console.log(data);
+								console.log(tooltipItem);
 								return 'ROI: '+parseFloat(Math.round((tooltipItem.yLabel/data.datasets[0].invest)*100*100) / 100).toFixed(2)+'%';
 							}
 						  }
